@@ -27,24 +27,18 @@ class Matrix {
 
         // Add r2 to r1
         // r1 = [old]r1 + r2
-        void add(int r1, int r2) {
+        void add(int r1, int r2, float scalar) {
             for (int i = 0; i < n; ++i) {
-                rep[r1][i] = rep[r1][i] + rep[r2][i];
-            }
-        }
-
-        // Subtract r2 from r1
-        // r1 = [old]r1 + r2
-        void subtract(int r1, int r2) {
-            for (int i = 0; i < n; ++i) {
-                rep[r1][i] = rep[r1][i] - rep[r2][i];
+                rep[r1][i] = rep[r1][i] + rep[r2][i] * scalar;
             }
         }
 
         // Multiply row by scalar
         // row = [old]row * scalar
         void scaleRow(int row, int scalar) {
-
+            for (int i = 0; i < n; ++i) {
+                rep[row][i] = rep[row][i] * scalar;
+            }
         }
 
         // Swap r1 and r2
@@ -63,16 +57,24 @@ class Matrix {
                 rep[r1][j] = temp[j];
             }
         }
-
-        int countLeadingZeros(int row) {
-            // First value of row
-            float num = rep[row][0];
-            int count = 0;
-            while (!compare(num, 0.0f)) { // While num is not equal to 0
-                count++;
-                num = rep[row][count];
+        
+        int findSmallestRowInColumn(int column) {
+            int min = 0;
+            for (int i = 0; i < m; ++i) {
+                if (rep[i][column] < rep[min][column]) {
+                    min = i;
+                }
             }
-            return count;
+            return min;
+        }
+        
+        float[][] getArrayFromMatrix() {
+            
+        }
+
+        // Get matrix excluding first row and first column
+        Matrix getSubMatrix() {
+            Matrix m(n-1);
         }
 
     public:
@@ -94,12 +96,18 @@ class Matrix {
             }
             return str;
         }
-        void a(int r1, int r2) {
-            swap(r1, r2);
-        }
         // Convert matrix to Echelon form
         void echelon() {
+            for (int i = 0; i < n; ++i) {
+                int pivotRow = findSmallestRowInColumn(i);
 
+                // Scale smallest row to 1
+                float scaleFactor = 1.0f / rep[pivotRow][i];
+                scaleRow(pivotRow, scaleFactor);
+
+                // Add to get other elements in column to be zero
+                
+            }
         }
         // Convert matrix to Reduced Echelon Form
         void reducedEchelon() {
@@ -111,7 +119,7 @@ int main() {
     float array[3][3] = {{1.0f, 3.0f, 4.0f}, {1.0f, 1.0f, 0.0f}, {2.0f, 2.0f, 2.0f}};
     Matrix m(array, 3);
 
-    m.a(0, 1);
+    m.echelon();
 
     string str = m.toString();
 

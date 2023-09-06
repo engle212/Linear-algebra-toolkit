@@ -68,8 +68,8 @@ class Matrix {
             return min;
         }
         
-        float[][] getArrayFromMatrix() {
-            
+        float[m][n] getArray() {
+            return rep;
         }
 
         // Get matrix excluding first row and first column

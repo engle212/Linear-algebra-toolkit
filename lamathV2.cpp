@@ -56,25 +56,47 @@ class Matrix {
             }
         }
 
-        // Return index of smallest row in a given column
-        //int findSmallestRowInColumn(int column) {
-            //float min = rep.at(0).at(column);
-            //int minIdx = 0;
-            //for (int i = 0; i < rows; i++) {
-            //    float curr = rep.at(i).at(column);
-            //    if (curr < min) {
-            //        min = curr;
-            //        minIdx = i;
-            //    }
-            //}
-            //return minIdx;
-        //}
+        // Return index of smallest nonzero row in a given column
+        int findPivotRow(int column) {
+            float min = rep.at(column); // Set min to first row of column
+            int minIdx = column;
+            for (int i = 0; i < rows; i++) {
+                float curr = rep.at(column + cols * i);
+                if (!compare(curr, 0) && curr < min) {
+                    min = curr;
+                    minIdx = column + cols * i;
+                }
+            }
+            return minIdx;
+        }
+
+        // Return rep, excluding first row and first column
+        Matrix getInnerMatrix() {
+            // Copy rep
+            std::vector<float> repCopy = rep;
+
+            // Remove first row
+            repCopy.erase(repCopy.begin(), repCopy.begin() + cols);
+
+            // Remove first column
+            for (int i = 0; i < rows; i = i + cols - 1) {
+                repCopy.erase(repCopy.begin()+i);
+            }
+            
+            // Construct new Matrix
+            Matrix newMatrix(repCopy, rows - 1, cols - 1);
+
+            return newMatrix;
+        }
         
     public:
+        // Construct empty matrix
         Matrix(int m, int n) {
             // Set dimensions of rep
             setDim(m, n);
         }
+
+        // Construct matrix from 2D vector
         Matrix(std::vector<std::vector<float>> &vect) {
             // Set dimensions of rep
             setDim(vect.size(), vect.at(0).size());
@@ -85,6 +107,13 @@ class Matrix {
                 rep[i] = vect.at((i - c) / cols).at(c);
             }
         }
+
+        // Construct matrix from 1D vector
+        Matrix(std::vector<float> &vect, int m, int n) {
+            setDim(m, n);
+            rep = vect;
+        }
+
         // Return string representation of rep
         std::string toString() {
             std::string str = "{";
@@ -98,6 +127,11 @@ class Matrix {
             str +="}";
             return str;
         }
+
+        // Return vector containing contents of matrix
+        std::vector<float> getVector() {
+            return rep;
+        }
         
         // Return dimensions of rep
         std::pair<int, int> getDim() {
@@ -106,7 +140,35 @@ class Matrix {
 
         // Convert rep to Echelon form
         void echelon() {
+            // Determine pivot row
+            int pivRow = findPivotRow(0);
+
+            // Ensure pivot row is first row in matrix
+            if (pivRow != 0) {
+                swap(pivRow, 0);
+            }
+            // Scale pivot row so first num is 1
+            scaleRow(0, 1.0f / rep.at(0));
+
+            // Subtract pivot row from all other rows
+            for (int i = 1; i < rows; i++) {
+                float factor = rep.at(0) / rep.at(i * cols);
+                add(i, 0, factor);
+            }
             
+            // Recursively perform echelon function on inner matrix
+            Matrix innerMatrix = getInnerMatrix();
+            innerMatrix.echelon();
+            std::vector<float> innerVect = innerMatrix.getVector();
+
+            // Overwrite overall matrix with inner matrix echelon
+            // Start with second row
+            for (int j = (cols + 1); j < (rows * cols); j++) {
+                // Ensure not in first column
+                if (j % cols != 0) {
+                    rep.at(j) = innerVect.at(j - cols - 1);
+                }
+            }
         }
         
 };

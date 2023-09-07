@@ -18,7 +18,7 @@ class Matrix {
         void setDim(int m, int n) {
             rows = m;
             cols = n;
-            rep.resize(rows*cols, '0');
+            rep.resize(rows*cols, 0);
         }
 
         // Add r2 to r1
@@ -27,6 +27,32 @@ class Matrix {
             int dif = r2 - r1;
             for (int i = (r1 * cols); i < (r1 * cols + cols); i++) {
                 rep.at(i) = rep.at(i) + scalar * rep.at(i + dif*cols);
+            }
+        }
+
+        // Multiply row by scalar
+        // row = [old]row * scalar
+        void scaleRow(int row, float scalar) {
+            for (int i = (row * cols); i < (row * cols + cols); i++) {
+                rep.at(i) = rep.at(i) * scalar;
+            }
+        }
+
+        // Swap r1 and r2
+        // r1 = [old]r2
+        // r2 = [old]r1
+        void swap(int r1, int r2) {
+            std::vector<float> temp;
+            temp.resize(cols, 0);
+            // Copy r2 to temp
+            // Copy r1 to r2
+            for (int i = 0; i < cols; i++) {
+                temp.at(i) = rep.at(i + r2 * cols);
+                rep.at(i + r2 * cols) = rep.at(i + r1 * cols);
+            }
+            // Copy temp to r1
+            for (int j = 0; j < cols; j++) {
+                rep.at(j + r1 * cols) = temp.at(j);
             }
         }
 
@@ -81,12 +107,6 @@ class Matrix {
         // Convert rep to Echelon form
         void echelon() {
             
-        }
-
-        void scaleRow(int row, float scalar) {
-            for (int i = (row * cols); i < (row * cols + cols); i++) {
-                rep.at(i) = rep.at(i) * scalar;
-            }
         }
         
 };

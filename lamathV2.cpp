@@ -69,7 +69,8 @@ class Matrix {
             }
             return minIdx;
         }
-
+        
+        // TODO: Fix this function (doesn't work at all)
         // Return rep, excluding first row and first column
         Matrix getInnerMatrix() {
             // Copy rep
@@ -88,7 +89,15 @@ class Matrix {
 
             return newMatrix;
         }
-        
+
+        // Return sum of absolute values in matrix
+        float getAbsoluteValueSum() {
+            float sum = 0.0f;
+            for (int i = 0; i < rows*cols; i++) {
+                sum += fabs(rep.at(i));
+            }
+            return sum;
+        }
     public:
         // Construct empty matrix
         Matrix(int m, int n) {
@@ -138,46 +147,57 @@ class Matrix {
             return std::make_pair(rows, cols);
         }
 
-        // Convert rep to Echelon form
-        void echelon() {
-            // Determine pivot row
-            int pivRow = findPivotRow(0);
+        // Convert rep to Reduced Row Echelon form
+        void reducedEchelon() {
+            // Check if matrix is empty, or 1 row
+            if (compare(getAbsoluteValueSum(), 0.0f, 0.000001)) {
+                // Do nothing
+            } else if (rows == 1) {
+                // Scale values in row
+                scaleRow(0, 1.0f / rep.at(0));
+            } else {
+                // Determine pivot row
+                int pivRow = findPivotRow(0);
 
-            // Ensure pivot row is first row in matrix
-            if (pivRow != 0) {
-                swap(pivRow, 0);
-            }
-            // Scale pivot row so first num is 1
-            scaleRow(0, 1.0f / rep.at(0));
+                // Ensure pivot row is first row in matrix
+                if (pivRow != 0) {
+                    swap(pivRow, 0);
+                }
+                // Scale pivot row so first num is 1
+                scaleRow(0, 1.0f / rep.at(0));
 
-            // Subtract pivot row from all other rows
-            for (int i = 1; i < rows; i++) {
-                float factor = rep.at(0) / rep.at(i * cols);
-                add(i, 0, factor);
-            }
-            
-            // Recursively perform echelon function on inner matrix
-            Matrix innerMatrix = getInnerMatrix();
-            innerMatrix.echelon();
-            std::vector<float> innerVect = innerMatrix.getVector();
+                // Subtract pivot row from all other rows
+                for (int i = 1; i < rows; i++) {
+                    float factor = rep.at(0) / rep.at(i * cols);
+                    add(i, 0, factor);
+                }
 
-            // Overwrite overall matrix with inner matrix echelon
-            // Start with second row
-            for (int j = (cols + 1); j < (rows * cols); j++) {
-                // Ensure not in first column
-                if (j % cols != 0) {
-                    rep.at(j) = innerVect.at(j - cols - 1);
+                // Ensure recursion is possible
+                if (cols > 1) {
+                    // Recursively perform echelon function on inner matrix
+                    Matrix innerMatrix = getInnerMatrix();
+                    innerMatrix.reducedEchelon();
+                    std::cout << innerMatrix.toString() << "\n\n";
+                    std::vector<float> innerVect = innerMatrix.getVector();
+
+                    // Overwrite overall matrix with reduced inner matrix
+                    // Start with second row
+                    for (int j = (cols + 1); j < (rows * cols); j++) {
+                        // Ensure not in first column
+                        if (j % cols != 0) {
+                            rep.at(j) = innerVect.at(j - cols - 1);
+                        }
+                    }
                 }
             }
         }
-        
 };
 
 int main() {
-    std::vector<std::vector<float>> v = {{1.0f, 3.0f, 4.0f}, {1.0f, 1.0f, 0.0f}, {2.0f, 2.0f, 2.0f}};
+    std::vector<std::vector<float>> v = {{1, 2, 3, -1}, {4, 5, 6, 3}, {7, 8, 9, 5}};
     Matrix m(v);
 
-    //m.echelon();
+    m.reducedEchelon();
 
     std::string str = m.toString();
     std::cout << str;

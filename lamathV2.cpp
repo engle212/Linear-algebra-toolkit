@@ -21,6 +21,14 @@ class Matrix {
             rep.resize(rows*cols, '0');
         }
 
+        // Add r2 to r1
+        // r1 = [old]r1 + scalar * r2
+        void add(int r1, int r2, float scalar) {
+            int dif = r2 - r1;
+            for (int i = (r1 * cols); i < (r1 * cols + cols); i++) {
+                rep.at(i) = rep.at(i) + scalar * rep.at(i + dif*cols);
+            }
+        }
 
         // Return index of smallest row in a given column
         //int findSmallestRowInColumn(int column) {
@@ -74,21 +82,19 @@ class Matrix {
         void echelon() {
             
         }
-        // Add r2 to r1
-        // r1 = [old]r1 + scalar * r2
-        void add(int r1, int r2, float scalar) {
-            int dif = r2 - r1;
-            for (int i = (r1 * cols); i < (r1 * cols + cols); i++) {
-                rep.at(i) = rep.at(i) + scalar * rep.at(i + dif*cols);
+
+        void scaleRow(int row, float scalar) {
+            for (int i = (row * cols); i < (row * cols + cols); i++) {
+                rep.at(i) = rep.at(i) * scalar;
             }
         }
+        
 };
 
 int main() {
     std::vector<std::vector<float>> v = {{1.0f, 3.0f, 4.0f}, {1.0f, 1.0f, 0.0f}, {2.0f, 2.0f, 2.0f}};
     Matrix m(v);
 
-    m.add(1, 2, -0.5f);
     //m.echelon();
 
     std::string str = m.toString();

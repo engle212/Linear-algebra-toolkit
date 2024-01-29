@@ -56,21 +56,54 @@ class Matrix {
             }
         }
 
-        // Return index of smallest nonzero row in a given column
-        int findPivotRow(int column) {
-            float min = rep.at(column); // Set min to first row of column
-            int minIdx = column;
-            for (int i = 0; i < rows; i++) {
-                float curr = rep.at(column + cols * i);
-                if (!compare(curr, 0) && curr < min) {
-                    min = curr;
-                    minIdx = column + cols * i;
+        // Find leftmost non-zero column
+        int findPivotColumn() {
+            //float min = rep.at(row*cols);
+            //int minIdx = row*cols;
+            
+            // Iterate through columns until column is non-zero
+            int i = 0;
+            int colIdx = -1; // Negative only when non-zero column has not been found
+            
+            while (colIdx < 0 && i < cols) {
+                // Check each value in column
+                for (int j = 0; j < rows; j++) {
+                    // Get value in the column
+                    float currVal = rep.at(j*cols);
+                    // Check if non-zero
+                    if (!compare(currVal, 0)) {
+                        colIdx = i;
+                    }
                 }
+                i++;
             }
-            return minIdx;
+            return colIdx;
+        }
+
+        // Return index of row where num is in the given column col. If none, return negative
+        int findNumInColumn(int col, int num) {
+            // Iterate through columns until column is non-zero
+            int i = 0;
+            int rowIdx = -1; // Negative only when non-zero column has not been found
+
+            // Iterate through col until one found or out of rows
+            /*
+            while (rowIdx < 0 && i < rows) {
+                // Check each value in column
+                for (int j = 0; j < rows; j++) {
+                    // Get value in the column
+                    float currVal = rep.at(j*cols);
+                    // Check if non-zero
+                    if (!compare(currVal, 0)) {
+                        rowIdx = i;
+                    }
+                }
+                i++;
+            }
+            */
+            return rowIdx;
         }
         
-        // TODO: Fix this function (doesn't work at all)
         // Return rep, excluding first row and first column
         Matrix getInnerMatrix() {
             // Copy rep
@@ -79,13 +112,8 @@ class Matrix {
             // Remove first row
             repCopy.erase(repCopy.begin(), repCopy.begin() + cols);
 
-            // Remove first column
-            for (int i = 0; i < rows; i = i + cols - 1) {
-                repCopy.erase(repCopy.begin()+i);
-            }
-            
             // Construct new Matrix
-            Matrix newMatrix(repCopy, rows - 1, cols - 1);
+            Matrix newMatrix(repCopy, rows - 1, cols);
 
             return newMatrix;
         }
@@ -110,7 +138,7 @@ class Matrix {
             // Set dimensions of rep
             setDim(vect.size(), vect.at(0).size());
             // Load vector values into rep
-            for (int i = 0; i < rep.size(); i++) {
+            for (unsigned int i = 0; i < rep.size(); i++) {
                 int c = i % cols;
                 // Set rep at position i to value from 2D vector
                 rep[i] = vect.at((i - c) / cols).at(c);
@@ -127,7 +155,7 @@ class Matrix {
         std::string toString() {
             std::string str = "{";
             // Cycle through rep and display values
-            for (int i = 0; i < rep.size(); i++) {
+            for (unsigned int i = 0; i < rep.size(); i++) {
                 if (i != 0 && i % cols == 0) {
                     str += "}\n{";
                 }
@@ -148,7 +176,7 @@ class Matrix {
         }
 
         // Convert rep to Reduced Row Echelon form
-        void reducedEchelon() {
+        void echelon() {
             // Check if matrix is empty, or 1 row
             if (compare(getAbsoluteValueSum(), 0.0f, 0.000001)) {
                 // Do nothing
@@ -156,15 +184,29 @@ class Matrix {
                 // Scale values in row
                 scaleRow(0, 1.0f / rep.at(0));
             } else {
+                // Determine left-most non-zero column
+                int pivCol = findPivotColumn();
+                // Move a 1 to topmost row (if no 1, make a 1)
+
+
+                // Put 0s below topmost row
+
+                // If no more non-zero rows, skip recursion
+
+                // Done!
+
                 // Determine pivot row
-                int pivRow = findPivotRow(0);
+                int pivRow = findPivotRow();
 
                 // Ensure pivot row is first row in matrix
                 if (pivRow != 0) {
                     swap(pivRow, 0);
                 }
+
+                float pivCol = findPivotColumn();
+
                 // Scale pivot row so first num is 1
-                scaleRow(0, 1.0f / rep.at(0));
+                scaleRow(0, 1.0f / pivNum);
 
                 // Subtract pivot row from all other rows
                 for (int i = 1; i < rows; i++) {
@@ -177,16 +219,16 @@ class Matrix {
                     // Recursively perform echelon function on inner matrix
                     Matrix innerMatrix = getInnerMatrix();
                     innerMatrix.reducedEchelon();
-                    std::cout << innerMatrix.toString() << "\n\n";
+
                     std::vector<float> innerVect = innerMatrix.getVector();
+                    
+                    std::cout << getDim().first << "__" << getDim().second << ": dim\n";
 
                     // Overwrite overall matrix with reduced inner matrix
                     // Start with second row
-                    for (int j = (cols + 1); j < (rows * cols); j++) {
-                        // Ensure not in first column
-                        if (j % cols != 0) {
-                            rep.at(j) = innerVect.at(j - cols - 1);
-                        }
+                    for (int j = cols; j < (rows * cols); ++j) {
+                        rep.at(j) = innerVect.at(j - cols);
+                        std::cout << j << ">>" << j - cols << "\n";
                     }
                 }
             }
@@ -197,7 +239,7 @@ int main() {
     std::vector<std::vector<float>> v = {{1, 2, 3, -1}, {4, 5, 6, 3}, {7, 8, 9, 5}};
     Matrix m(v);
 
-    m.reducedEchelon();
+    m.echelon();
 
     std::string str = m.toString();
     std::cout << str;

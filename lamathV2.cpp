@@ -10,7 +10,7 @@ bool compare(float a, float b, float epsilon = 0.0001f) {
     return (fabs(a - b) < epsilon);
 }
 
-class Matrix {
+//class Matrix {
     private:
         std::vector<float> rep;
         int rows;

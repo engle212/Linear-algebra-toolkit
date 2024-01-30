@@ -45,5 +45,6 @@
         "vector": "cpp",
         "algorithm": "cpp",
         "string": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }

@@ -3,49 +3,69 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+#include "lamath.h"
 
 bool compare(float a, float b, float epsilon = 0.0001f) {
     return (fabs(a - b) < epsilon);
 }
 
-class Matrix {
-  private:
-    std::vector<float> rep;
-    int rows;
-    int cols;
-    // Populate arr by passing in 2D array
-    void populate(int *arr, int rows) {
+void Matrix::setDim(int m, int n) {
+  rows = m;
+  cols = n;
+  rep.resize(rows*cols, 0);
+}
 
+// r1 = [old]r1 + scalar * r2
+void Matrix::add(int r1, int r2, float scalar) {
+  // Get first index of r1
+  // Get first index of r2
+  std::cout << "PLACEHOLDER";
+}
+
+// row = [old]row * scalar
+void Matrix::scaleRow(int row, float scalar) {
+  std::cout << "PLACEHOLDER";
+}
+
+// r1 = [old]r2
+// r2 = [old]r1
+void Matrix::swap(int r1, int r2) {
+  std::cout << "PLACEHOLDER";
+}
+
+// Construct empty Matrix
+Matrix::Matrix(int m, int n) {
+  setDim(m, n);
+}
+
+// Construct Matrix from array
+template <size_t r, size_t c>
+Matrix::Matrix(int (&arr)[r][c]) {
+  std::cout << "\n\narr = " << std::to_string(&arr);
+  // Set to dimensions of arr
+  setDim(sizeof(arr), sizeof(arr[0]));
+  // Load array values into rep
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      rep.at(i+j) = (&arr)[i][j];
     }
-
-    // r1 = [old]r1 + scalar * r2
-    void add(int r1, int r2, float scalar) {
-      
+  }
+}
+std::string Matrix::toString() {
+  std::string str = "{";
+    // Cycle through rep and display values
+    for (unsigned int i = 0; i < rep.size(); i++) {
+      if (i != 0 && i % cols == 0) {
+        str += "}\n{";
+      }
+      str += "[" + std::to_string(rep.at(i)) + "]";
     }
-
-    // row = [old]row * scalar
-    void scaleRow(int row, float scalar) {
-
-    }
-
-    // r1 = [old]r2
-    // r2 = [old]r1
-    void swap(int r1, int r2) {
-
-    }
-
-  public:
-    // Constructor
-    Matrix(int *arr, int rows) {
-
-    }
-    std::string toString() {
-
-    }
-    void Echelon() {
-
-    }
-    void ReducedEchelon() {
-
-    }
+    str +="}";
+    return str;
+}
+void Matrix::Echelon() {
+  std::cout << "PLACEHOLDER";
+}
+void Matrix::ReducedEchelon() {
+  std::cout << "PLACEHOLDER";
 }

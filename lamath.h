@@ -14,7 +14,6 @@ class Matrix {
     int rows;
     int cols;
     void setDim(int m, int n);
-    //template <size_t r, size_t c>
     //void populate(int (&arr)[r][c]);
     // Adding, subtracting, scaling, and swapping rows
     void add(int r1, int r2, float scalar);
@@ -24,8 +23,7 @@ class Matrix {
   public:
     // Constructors
     Matrix(int m, int n);
-    template <size_t r, size_t c>
-    Matrix(int (&arr)[r][c]);
+    Matrix(int *arr, int r, int c);
     std::string toString();
     void Echelon();
     void ReducedEchelon();

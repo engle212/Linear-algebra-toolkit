@@ -39,29 +39,27 @@ Matrix::Matrix(int m, int n) {
 }
 
 // Construct Matrix from array
-template <size_t r, size_t c>
-Matrix::Matrix(int (&arr)[r][c]) {
-  std::cout << "\n\narr = " << std::to_string(&arr);
+Matrix::Matrix(int *arr, int r, int c) {
   // Set to dimensions of arr
-  setDim(sizeof(arr), sizeof(arr[0]));
+  setDim(r, c);
   // Load array values into rep
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < cols; j++) {
-      rep.at(i+j) = (&arr)[i][j];
+      rep[cols*i+j] = arr[cols*i+j];
     }
   }
 }
 std::string Matrix::toString() {
   std::string str = "{";
-    // Cycle through rep and display values
-    for (unsigned int i = 0; i < rep.size(); i++) {
-      if (i != 0 && i % cols == 0) {
-        str += "}\n{";
-      }
-      str += "[" + std::to_string(rep.at(i)) + "]";
+  // Cycle through rep and display values
+  for (size_t i = 0; i < rows*cols; i++) {
+    if (i != 0 && i % cols == 0) {
+      str += "}\n{";
     }
-    str +="}";
-    return str;
+    str += "[" + std::to_string(rep.at(i)) + "]";
+  }
+  str +="}";
+  return str;
 }
 void Matrix::Echelon() {
   std::cout << "PLACEHOLDER";

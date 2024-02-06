@@ -52,6 +52,17 @@ void Matrix::swap(int r1, int r2) {
     rep.at(j+i2) = temp;
   }
 }
+// Return true if column at col is all zeros
+bool Matrix::isZero(int col) {
+  int i = 0;
+  bool isZero = true;
+  while (isZero && i < rows) {
+    isZero = compare(rep.at(col + i * cols), 0.0f);
+    i++;
+  }
+
+  return isZero;
+}
 
 // Construct empty Matrix
 Matrix::Matrix(int m, int n) {
@@ -81,8 +92,18 @@ std::string Matrix::toString() {
   str +="}";
   return str;
 }
+// m is rows//
+// n is columns
 void Matrix::Echelon() {
-  std::cout << "PLACEHOLDER";
+  // Check if matrix is large enough to compute Echelon
+  if (rows != 1 && rep.size() > 1) {
+    // Determine leftmost non-zero column
+    // Maybe an isZero(col) function?
+    // Use row ops to put 1 in the topmost position of the column (called pivot position)
+    // Use row ops to put zeros below the pivot position
+    // If no more zeros below the pivot position, done
+    // Apply steps to submatrix of rows under pivot position
+  }
 }
 void Matrix::ReducedEchelon() {
   std::cout << "PLACEHOLDER";

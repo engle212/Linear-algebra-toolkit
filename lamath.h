@@ -19,6 +19,7 @@ class Matrix {
     void add(int r1, int r2, float scalar);
     void scaleRow(int row, float scalar);
     void swap(int r1, int r2);
+    bool isZero(int col);
 
   public:
     // Constructors

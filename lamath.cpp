@@ -18,19 +18,39 @@ void Matrix::setDim(int m, int n) {
 // r1 = [old]r1 + scalar * r2
 void Matrix::add(int r1, int r2, float scalar) {
   // Get first index of r1
+  int i1 = r1*cols;
   // Get first index of r2
-  std::cout << "PLACEHOLDER";
+  int i2 = r2*cols;
+
+  for (int j = 0; j < cols; j++) {
+    rep.at(j+i1) = rep.at(j+i1) + scalar * rep.at(j+i2);
+  }
 }
 
 // row = [old]row * scalar
 void Matrix::scaleRow(int row, float scalar) {
-  std::cout << "PLACEHOLDER";
+
+  // Get first index of row
+  int i1 = row*cols;
+
+  for (int j = 0; j < cols; j++) {
+    rep.at(j+i1) = scalar * rep.at(j+i1);
+  }
 }
 
 // r1 = [old]r2
 // r2 = [old]r1
 void Matrix::swap(int r1, int r2) {
-  std::cout << "PLACEHOLDER";
+  // Get first index of r1
+  int i1 = r1*cols;
+  // Get first index of r2
+  int i2 = r2*cols;
+
+  for (int j = 0; j < cols; j++) {
+    float temp = rep.at(j+i1);
+    rep.at(j+i1) = rep.at(j+i2);
+    rep.at(j+i2) = temp;
+  }
 }
 
 // Construct empty Matrix

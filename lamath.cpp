@@ -15,6 +15,48 @@ void Matrix::setDim(int m, int n) {
   rep.resize(rows*cols, 0);
 }
 
+// Return rep index given row and column of an element
+int Matrix::indexOf(int r, int c) {
+  return cols * r + c;
+}
+
+// Return row that the index i is located in
+int Matrix::rowOf(int i) {
+  return i / cols;
+}
+
+// Return column that the index i is located in
+int Matrix::columnOf(int i) {
+  return i % cols;
+}
+
+// Return row with minimum value in the given column col
+int Matrix::minRow(int firstRow, int col) {
+  float min = rep.at(indexOf(firstRow, col));
+  int mRow = firstRow;
+
+  if (rows - firstRow > 1) {
+    int x = indexOf(minRow(firstRow+1, col), col);
+    if (rep.at(x) < min) {
+      min = rep.at(x);
+      mRow = rowOf(x);
+    }
+  }
+  return mRow;
+}
+
+// Sort rows based on given column col
+// Selection Sort
+void Matrix::sortRows(int firstRow, int col) {
+  if (rows - firstRow > 1) {
+    // Get minimum of rows in question
+    // Swap it with firstRow
+    swap(firstRow, minRow(firstRow, col));
+    // sortRows excluding firstRow
+    sortRows(firstRow+1, col);
+  }
+}
+
 // r1 = [old]r1 + scalar * r2
 void Matrix::add(int r1, int r2, float scalar) {
   // Get first index of r1
@@ -80,6 +122,7 @@ Matrix::Matrix(int *arr, int r, int c) {
     }
   }
 }
+
 std::string Matrix::toString() {
   std::string str = "{";
   // Cycle through rep and display values
@@ -92,17 +135,46 @@ std::string Matrix::toString() {
   str +="}";
   return str;
 }
+
+void Matrix::populateWith1DVector(std::vector<float> vector) {
+  rep = vector;
+}
+
 // m is rows//
 // n is columns
 void Matrix::Echelon() {
   // Check if matrix is large enough to compute Echelon
   if (rows != 1 && rep.size() > 1) {
     // Determine leftmost non-zero column
-    // Maybe an isZero(col) function?
+    int i = 0;
+    bool nonZeroColFound = false;
+    while (i < cols && !nonZeroColFound) {
+      nonZeroColFound = isZero(i);
+      i++;
+    }
+    int leftmostNonZeroCol = i - 1;
+
     // Use row ops to put 1 in the topmost position of the column (called pivot position)
+    // Selection sort
+    sortRows(0, leftmostNonZeroCol);
+
+    // Scale top row to 1
+    scaleRow(0, 1.0f / rep.at(indexOf(0, leftmostNonZeroCol)));
+
     // Use row ops to put zeros below the pivot position
-    // If no more zeros below the pivot position, done
+    for (int j = 1; j < rows; j++) {
+      add(j, 0, -rep.at(indexOf(j, leftmostNonZeroCol)));
+    }
+
     // Apply steps to submatrix of rows under pivot position
+    // Create submatrix excluding first row
+    Matrix m = Matrix(rows-1, cols);
+    std::vector<float> newVec(rep.begin() + cols, rep.end());
+    m.populateWith1DVector(newVec);
+    m.toString();
+    m.Echelon();
+
+    // Change values to match submatrix
   }
 }
 void Matrix::ReducedEchelon() {

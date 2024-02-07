@@ -14,7 +14,11 @@ class Matrix {
     int rows;
     int cols;
     void setDim(int m, int n);
-    //void populate(int (&arr)[r][c]);
+    int indexOf(int r, int c);
+    int rowOf(int i);
+    int columnOf(int i);
+    int minRow(int firstRow, int col);
+    void sortRows(int firstRow, int col);
     // Adding, subtracting, scaling, and swapping rows
     void add(int r1, int r2, float scalar);
     void scaleRow(int row, float scalar);
@@ -26,6 +30,7 @@ class Matrix {
     Matrix(int m, int n);
     Matrix(int *arr, int r, int c);
     std::string toString();
+    void populateWith1DVector(std::vector<float> vector);
     void Echelon();
     void ReducedEchelon();
 };

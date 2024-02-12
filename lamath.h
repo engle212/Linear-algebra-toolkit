@@ -33,4 +33,5 @@ class Matrix {
     void populateWith1DVector(std::vector<float> vector);
     void Echelon();
     void ReducedEchelon();
+    std::vector<float> Vector1D();
 };

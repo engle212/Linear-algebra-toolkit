@@ -9,6 +9,7 @@ int main() {
   int array[r][c] = {{1, 3, 4, 5}, {1, 1, 0, 2}, {2, 2, 2, 0}};
   Matrix m = Matrix((int*)array, r, c);
 
+  m.Echelon();
   string str = m.toString();
   cout << str;
   return 0;

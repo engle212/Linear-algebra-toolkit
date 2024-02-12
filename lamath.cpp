@@ -136,8 +136,10 @@ std::string Matrix::toString() {
   return str;
 }
 
-void Matrix::populateWith1DVector(std::vector<float> vector) {
+// Populate Matrix using a 1D vector
+void Matrix::populateWith1DVector(std::vector<float> vector) { // Tested and working properly
   rep = vector;
+  rep.resize(rows * cols);
 }
 
 // m is rows//
@@ -149,7 +151,7 @@ void Matrix::Echelon() {
     int i = 0;
     bool nonZeroColFound = false;
     while (i < cols && !nonZeroColFound) {
-      nonZeroColFound = isZero(i);
+      nonZeroColFound = !isZero(i);
       i++;
     }
     int leftmostNonZeroCol = i - 1;
@@ -157,9 +159,10 @@ void Matrix::Echelon() {
     // Use row ops to put 1 in the topmost position of the column (called pivot position)
     // Selection sort
     sortRows(0, leftmostNonZeroCol);
-
+    
     // Scale top row to 1
     scaleRow(0, 1.0f / rep.at(indexOf(0, leftmostNonZeroCol)));
+
 
     // Use row ops to put zeros below the pivot position
     for (int j = 1; j < rows; j++) {
@@ -169,14 +172,24 @@ void Matrix::Echelon() {
     // Apply steps to submatrix of rows under pivot position
     // Create submatrix excluding first row
     Matrix m = Matrix(rows-1, cols);
-    std::vector<float> newVec(rep.begin() + cols, rep.end());
-    m.populateWith1DVector(newVec);
-    m.toString();
-    m.Echelon();
+    std::vector<float> subVec(rep.begin() + cols, rep.end());
+    m.populateWith1DVector(subVec);
 
-    // Change values to match submatrix
+    m.Echelon();
+    subVec = m.Vector1D();
+
+    // Put submatrix back into matrix
+    rep.erase(rep.end() - m.Vector1D().size(), rep.end());
+    
+    for(int i = 0; i < m.Vector1D().size(); i++) {
+      rep.push_back(m.Vector1D().at(i));
+    }
   }
 }
 void Matrix::ReducedEchelon() {
   std::cout << "PLACEHOLDER";
+}
+
+std::vector<float> Matrix::Vector1D() {
+  return rep;
 }
